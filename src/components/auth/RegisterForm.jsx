@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoaderCircle, UserPlus } from "lucide-react";
-import AuthInput from "./AuthInput";
 import { useAuth } from "../../hooks/useAuth";
-import { validateRegister, getAuthErrorMessage, } from "../../utils/authValidation";
+import AuthInput from "./AuthInput";
+import { validateRegister, getAuthErrorMessage } from "../../utils/authValidation";
 
 export default function RegisterForm() {
   const navigate = useNavigate();
@@ -17,23 +17,20 @@ export default function RegisterForm() {
   });
 
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
   function handleChange(event) {
     const { name, value } = event.target;
 
-    setForm((previous) => ({
-      ...previous,
+    setForm((current) => ({
+      ...current,
       [name]: value,
     }));
-
-    setError("");
-    setSuccess("");
   }
 
   async function handleSubmit(event) {
     event.preventDefault();
+    setError("");
 
     const validationError = validateRegister(form);
 
@@ -42,31 +39,34 @@ export default function RegisterForm() {
       return;
     }
 
-    setError("");
-    setSuccess("");
     setLoading(true);
 
-    const { data, error: authError } = await signUp({
-      displayName: form.displayName.trim(),
-      email: form.email.trim(),
-      password: form.password,
-    });
+    try {
+      const { data, error: signUpError } = await signUp({
+        displayName: form.displayName.trim(),
+        email: form.email.trim(),
+        password: form.password,
+      });
 
-    setLoading(false);
+      if (signUpError) {
+        setError(getAuthErrorMessage(signUpError));
+        return;
+      }
 
-    if (authError) {
-      setError(getAuthErrorMessage(authError));
-      return;
+      if (data?.session) {
+        navigate("/", { replace: true });
+        return;
+      }
+
+      setError(
+        "A conta foi criada, mas não recebemos uma sessão de acesso. Verifique a configuração de confirmação de e-mail no Supabase."
+      );
+    } catch (err) {
+      console.error("Erro ao cadastrar:", err);
+      setError("Ocorreu um erro inesperado. Tente novamente.");
+    } finally {
+      setLoading(false);
     }
-
-    if (data?.session) {
-      navigate("/");
-      return;
-    }
-
-    setSuccess(
-      "Conta criada! Verifique seu e-mail para confirmar o cadastro antes de entrar."
-    );
   }
 
   return (
@@ -78,6 +78,7 @@ export default function RegisterForm() {
         onChange={handleChange}
         placeholder="Como deseja ser chamado?"
         autoComplete="name"
+        required
       />
 
       <AuthInput
@@ -88,6 +89,7 @@ export default function RegisterForm() {
         onChange={handleChange}
         placeholder="seu@email.com"
         autoComplete="email"
+        required
       />
 
       <AuthInput
@@ -99,6 +101,7 @@ export default function RegisterForm() {
         placeholder="Mínimo de 8 caracteres"
         autoComplete="new-password"
         minLength={8}
+        required
       />
 
       <AuthInput
@@ -110,39 +113,28 @@ export default function RegisterForm() {
         placeholder="Digite sua senha novamente"
         autoComplete="new-password"
         minLength={8}
+        required
       />
 
       {error && (
-        <p
-          role="alert"
-          className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300"
-        >
+        <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">
           {error}
-        </p>
-      )}
-
-      {success && (
-        <p
-          role="status"
-          className="rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm leading-relaxed text-green-300"
-        >
-          {success}
-        </p>
+        </div>
       )}
 
       <button
         type="submit"
         disabled={loading}
-        className="shine-button flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 px-5 py-4 text-sm font-semibold text-white shadow-lg shadow-violet-900/20 transition duration-300 hover:-translate-y-0.5 hover:shadow-violet-600/30 disabled:cursor-not-allowed disabled:opacity-60"
+        className="shine-button flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 px-6 py-4 font-semibold text-white transition-all hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading ? (
           <>
-            <LoaderCircle size={18} className="animate-spin" />
+            <LoaderCircle className="h-5 w-5 animate-spin" />
             Criando conta...
           </>
         ) : (
           <>
-            <UserPlus size={18} />
+            <UserPlus className="h-5 w-5" />
             Criar minha conta
           </>
         )}
