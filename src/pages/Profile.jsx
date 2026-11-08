@@ -8,6 +8,7 @@ import ProfileForm from "../components/profile/ProfileForm";
 import PasswordForm from "../components/profile/PasswordForm";
 import ProfileSection from "../components/profile/ProfileSection";
 import { useAuth } from "../hooks/useAuth";
+import MyComments from "../components/profile/MyComments";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -118,6 +119,13 @@ export default function Profile() {
               description="Mantenha sua conta protegida utilizando uma senha segura."
             >
               <PasswordForm />
+            </ProfileSection>
+            
+            <ProfileSection
+              title="Meus comentários"
+              description="Gerencie seus comentários publicados."
+            >
+              <MyComments />
             </ProfileSection>
           </div>
         </div>
