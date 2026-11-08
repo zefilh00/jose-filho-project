@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { Menu, X, LogIn, UserPlus } from "lucide-react";
+import { Menu, X, LogIn, UserPlus, UserRound,} from "lucide-react";
+import { useAuth } from "../../hooks/useAuth";
+import { getProfileAvatar } from "../../utils/avatarUtils";
 
 const navigation = [
   { name: "Início", path: "/" },
@@ -13,7 +15,31 @@ const navigation = [
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const { user, profile, loading } = useAuth();
+
   const closeMenu = () => setMenuOpen(false);
+
+  const avatarUrl = getProfileAvatar(profile?.avatar_path);
+
+  const profileButton = (
+    <Link
+      to="/perfil"
+      onClick={closeMenu}
+      title="Meu perfil"
+      aria-label="Acessar meu perfil"
+      className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-violet-400/40 bg-violet-500/10 text-violet-300 transition hover:scale-105 hover:border-violet-400 hover:bg-violet-500/20"
+    >
+      {avatarUrl ? (
+        <img
+          src={avatarUrl}
+          alt="Minha foto de perfil"
+          className="h-full w-full object-cover"
+        />
+      ) : (
+        <UserRound size={20} />
+      )}
+    </Link>
+  );
 
   return (
     <header className="fixed left-0 top-0 z-50 w-full border-b border-white/[0.07] bg-[#080b18]/85 shadow-lg shadow-black/5 backdrop-blur-xl">
@@ -62,24 +88,32 @@ function Header() {
           </nav>
 
           <div className="hidden items-center gap-3 lg:flex">
-            <Link
-              to="/login"
-              className="group flex items-center gap-2 rounded-lg px-4 py-2 text-sm text-slate-300 transition duration-300 hover:text-white"
-            >
-              <LogIn
-                size={16}
-                className="transition-transform duration-300 group-hover:-translate-x-1"
-              />
-              Entrar
-            </Link>
+            {!loading && (
+              user ? (
+                profileButton
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className="group flex items-center gap-2 rounded-lg px-4 py-2 text-sm text-slate-300 transition duration-300 hover:text-white"
+                  >
+                    <LogIn
+                      size={16}
+                      className="transition-transform duration-300 group-hover:-translate-x-1"
+                    />
+                    Entrar
+                  </Link>
 
-            <Link
-              to="/cadastro"
-              className="shine-button flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-900/20 transition duration-300 hover:-translate-y-0.5 hover:shadow-violet-600/30"
-            >
-              <UserPlus size={16} />
-              Criar conta
-            </Link>
+                  <Link
+                    to="/cadastro"
+                    className="shine-button flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-900/20 transition duration-300 hover:-translate-y-0.5 hover:shadow-violet-600/30"
+                  >
+                    <UserPlus size={16} />
+                    Criar conta
+                  </Link>
+                </>
+              )
+            )}
           </div>
 
           <button
@@ -107,7 +141,11 @@ function Header() {
                     key={item.path}
                     to={item.path}
                     onClick={closeMenu}
-                    style={{ transitionDelay: menuOpen ? `${index * 35}ms` : "0ms" }}
+                    style={{
+                      transitionDelay: menuOpen
+                        ? `${index * 35}ms`
+                        : "0ms",
+                    }}
                     className={({ isActive }) =>
                       `rounded-lg px-4 py-3 text-sm transition-all duration-300 ${
                         isActive
@@ -121,24 +159,47 @@ function Header() {
                 ))}
               </nav>
 
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                <Link
-                  to="/login"
-                  onClick={closeMenu}
-                  className="flex items-center justify-center gap-2 rounded-lg border border-white/10 py-3 text-center text-sm text-slate-300 transition hover:border-violet-400/40 hover:text-white"
-                >
-                  <LogIn size={16} />
-                  Entrar
-                </Link>
+              <div className="mt-4">
+                {!loading && (
+                  user ? (
+                    <Link
+                      to="/perfil"
+                      onClick={closeMenu}
+                      className="flex items-center justify-center gap-3 rounded-lg border border-violet-400/30 bg-violet-500/10 py-3 text-sm font-semibold text-violet-300 transition hover:bg-violet-500/20"
+                    >
+                      {avatarUrl ? (
+                        <img
+                          src={avatarUrl}
+                          alt=""
+                          className="h-7 w-7 rounded-full object-cover"
+                        />
+                      ) : (
+                        <UserRound size={18} />
+                      )}
+                      Meu perfil
+                    </Link>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3">
+                      <Link
+                        to="/login"
+                        onClick={closeMenu}
+                        className="flex items-center justify-center gap-2 rounded-lg border border-white/10 py-3 text-center text-sm text-slate-300 transition hover:border-violet-400/40 hover:text-white"
+                      >
+                        <LogIn size={16} />
+                        Entrar
+                      </Link>
 
-                <Link
-                  to="/cadastro"
-                  onClick={closeMenu}
-                  className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-violet-600 py-3 text-center text-sm font-semibold text-white transition hover:brightness-110"
-                >
-                  <UserPlus size={16} />
-                  Criar conta
-                </Link>
+                      <Link
+                        to="/cadastro"
+                        onClick={closeMenu}
+                        className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-violet-600 py-3 text-center text-sm font-semibold text-white transition hover:brightness-110"
+                      >
+                        <UserPlus size={16} />
+                        Criar conta
+                      </Link>
+                    </div>
+                  )
+                )}
               </div>
             </div>
           </div>

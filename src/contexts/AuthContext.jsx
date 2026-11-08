@@ -7,18 +7,24 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
+
   const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(false);
 
   const fetchProfile = useCallback(async (userId) => {
+    setProfileLoading(true);
+
     const { data, error } = await supabase
       .from("profiles")
-      .select("*")
+      .select("id, display_name, avatar_path, is_admin, created_at")
       .eq("id", userId)
       .maybeSingle();
 
     if (!error) {
       setProfile(data);
     }
+
+    setProfileLoading(false);
 
     return { data, error };
   }, []);
@@ -45,6 +51,8 @@ export function AuthProvider({ children }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      if (!mounted) return;
+
       setSession(newSession);
       setUser(newSession?.user ?? null);
     });
@@ -60,11 +68,12 @@ export function AuthProvider({ children }) {
       fetchProfile(user.id);
     } else {
       setProfile(null);
+      setProfileLoading(false);
     }
   }, [user?.id, fetchProfile]);
 
   async function signUp({ displayName, email, password }) {
-    const { data, error } = await supabase.auth.signUp({
+    return await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -73,17 +82,13 @@ export function AuthProvider({ children }) {
         },
       },
     });
-
-    return { data, error };
   }
 
   async function signIn({ email, password }) {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    return await supabase.auth.signInWithPassword({
       email,
       password,
     });
-
-    return { data, error };
   }
 
   async function signOut() {
@@ -93,13 +98,16 @@ export function AuthProvider({ children }) {
 
   async function updateProfile(updates) {
     if (!user) {
-      return { error: new Error("Usuário não autenticado.") };
+      return {
+        data: null,
+        error: new Error("Usuário não autenticado."),
+      };
     }
 
     const allowedUpdates = {};
 
     if (updates.display_name !== undefined) {
-      allowedUpdates.display_name = updates.display_name;
+      allowedUpdates.display_name = updates.display_name.trim();
     }
 
     if (updates.avatar_path !== undefined) {
@@ -110,7 +118,7 @@ export function AuthProvider({ children }) {
       .from("profiles")
       .update(allowedUpdates)
       .eq("id", user.id)
-      .select()
+      .select("id, display_name, avatar_path, is_admin, created_at")
       .single();
 
     if (!error) {
@@ -121,18 +129,21 @@ export function AuthProvider({ children }) {
   }
 
   async function updatePassword(password) {
-    const { data, error } = await supabase.auth.updateUser({
+    return await supabase.auth.updateUser({
       password,
     });
-
-    return { data, error };
   }
+
+  const refreshProfile = useCallback(() => {
+    return user ? fetchProfile(user.id) : null;
+  }, [user, fetchProfile]);
 
   const value = {
     user,
     session,
     profile,
     loading,
+    profileLoading,
     isAuthenticated: !!user,
     isAdmin: profile?.is_admin === true,
     signUp,
@@ -140,7 +151,7 @@ export function AuthProvider({ children }) {
     signOut,
     updateProfile,
     updatePassword,
-    refreshProfile: () => user ? fetchProfile(user.id) : null,
+    refreshProfile,
   };
 
   return (
