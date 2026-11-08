@@ -1,27 +1,46 @@
-# Dependencies
+# Dependências
 node_modules/
 
 # Build
 dist/
 build/
 
-# Environment variables
+# Variáveis de ambiente e segredos
 .env
 .env.*
 !.env.example
 
 # Logs
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 pnpm-debug.log*
 
-# Editor
-.vscode/
-.idea/
-
-# Operating system
+# Sistema operacional
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# Miscellaneous
-*.local
+# Editores
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Cache
+.cache/
+.vite/
+.eslintcache
+
+# Testes
+coverage/
+
+# Arquivos temporários
+*.tmp
+*.temp
+*.swp
+*.swo
