@@ -61,7 +61,7 @@ function Home() {
       <Header />
 
       <main>
-        <section className="hero-section relative flex min-h-[590px] items-center overflow-hidden pt-20 lg:min-h-[620px]">
+        <section className="hero-section relative flex min-h-[590px] items-center overflow-hidden lg:min-h-[620px]">
           <div
             className="hero-background absolute inset-0 bg-cover bg-center"
             style={{

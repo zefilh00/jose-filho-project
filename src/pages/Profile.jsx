@@ -7,8 +7,8 @@ import ProfileAvatar from "../components/profile/ProfileAvatar";
 import ProfileForm from "../components/profile/ProfileForm";
 import PasswordForm from "../components/profile/PasswordForm";
 import ProfileSection from "../components/profile/ProfileSection";
-import { useAuth } from "../hooks/useAuth";
 import MyComments from "../components/profile/MyComments";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -53,6 +53,7 @@ export default function Profile() {
               <p className="mb-4 text-slate-400">
                 Não foi possível carregar seu perfil.
               </p>
+
               <button
                 onClick={refreshProfile}
                 className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-5 py-3 text-sm font-semibold text-white hover:bg-violet-500"
@@ -71,7 +72,7 @@ export default function Profile() {
     <div className="min-h-screen bg-[#080b18] text-white">
       <Header />
 
-      <main className="section-container pb-20 pt-32">
+      <main className="section-container pb-20 pt-8 sm:pt-10">
         <div className="mx-auto max-w-4xl">
           <div className="mb-10 flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
             <div>
@@ -120,7 +121,7 @@ export default function Profile() {
             >
               <PasswordForm />
             </ProfileSection>
-            
+
             <ProfileSection
               title="Meus comentários"
               description="Gerencie seus comentários publicados."

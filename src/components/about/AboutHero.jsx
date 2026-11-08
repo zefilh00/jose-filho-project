@@ -3,7 +3,7 @@ import fotoPerfil from "../../assets/images/foto-perfil.jpg";
 
 export default function AboutHero() {
   return (
-    <section className="relative overflow-hidden py-20 sm:py-28">
+    <section className="relative overflow-hidden pb-20 pt-8 sm:pb-24 sm:pt-10">
       <div className="hero-orb absolute -left-40 top-10 h-80 w-80 rounded-full bg-blue-600/20 blur-[100px]" />
       <div className="hero-orb hero-orb-delay absolute -right-40 bottom-0 h-96 w-96 rounded-full bg-purple-600/20 blur-[120px]" />
 

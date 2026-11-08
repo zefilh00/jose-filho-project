@@ -1,86 +1,81 @@
-import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
-import { Menu, X, LogIn, UserPlus, UserRound,} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
+import { Menu, X, LogIn, UserPlus, UserRound } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { getProfileAvatar } from "../../utils/avatarUtils";
+import logo from "../../assets/images/jf-logo-transparent.png";
 
 const navigation = [
-  { name: "Início", path: "/" },
-  { name: "Artigos", path: "/artigos" },
-  { name: "Recomendações", path: "/recomendacoes" },
-  { name: "Portfólio", path: "/portfolio" },
-  { name: "Sobre mim", path: "/sobre" },
+  { label: "Início", path: "/" },
+  { label: "Artigos", path: "/artigos" },
+  { label: "Recomendações", path: "/recomendacoes" },
+  { label: "Portfólio", path: "/portfolio" },
+  { label: "Sobre mim", path: "/sobre" },
 ];
 
-function Header() {
+export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const location = useLocation();
   const { user, profile, loading } = useAuth();
 
-  const closeMenu = () => setMenuOpen(false);
+  const avatarUrl = profile?.avatar_path
+    ? getProfileAvatar(profile.avatar_path)
+    : null;
 
-  const avatarUrl = getProfileAvatar(profile?.avatar_path);
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
 
-  const profileButton = (
-    <Link
-      to="/perfil"
-      onClick={closeMenu}
-      title="Meu perfil"
-      aria-label="Acessar meu perfil"
-      className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-violet-400/40 bg-violet-500/10 text-violet-300 transition hover:scale-105 hover:border-violet-400 hover:bg-violet-500/20"
-    >
-      {avatarUrl ? (
-        <img
-          src={avatarUrl}
-          alt="Minha foto de perfil"
-          className="h-full w-full object-cover"
-        />
-      ) : (
-        <UserRound size={20} />
-      )}
-    </Link>
-  );
+  const navLinkClass = ({ isActive }) =>
+    `nav-link relative py-2 text-sm font-medium transition-colors duration-300 ${
+      isActive
+        ? "text-violet-300"
+        : "text-slate-400 hover:text-white"
+    }`;
 
   return (
-    <header className="fixed left-0 top-0 z-50 w-full border-b border-white/[0.07] bg-[#080b18]/85 shadow-lg shadow-black/5 backdrop-blur-xl">
-      <div className="section-container">
-        <div className="flex h-20 items-center justify-between">
+    <>
+      <header className="fixed left-0 right-0 top-0 z-50 w-full border-b border-white/[0.07] bg-[#070b18]/90 backdrop-blur-xl">
+        <div className="mx-auto flex min-h-[88px] max-w-7xl items-center justify-between px-5 lg:px-8">
           <Link
             to="/"
-            onClick={closeMenu}
-            className="group flex flex-col"
             aria-label="José Filho - Página inicial"
+            className="group flex shrink-0 items-center gap-2.5"
           >
-            <span className="text-xl font-bold tracking-tight text-white transition duration-300 group-hover:tracking-wide">
-              José <span className="text-violet-400">Filho</span>
-            </span>
+            <img
+              src={logo}
+              alt="Símbolo JF"
+              className="h-12 w-12 object-contain transition duration-300 group-hover:scale-105 sm:h-14 sm:w-14"
+            />
 
-            <span className="text-[10px] font-medium uppercase tracking-[0.28em] text-slate-500 transition-colors group-hover:text-violet-300">
-              My Multiverse
-            </span>
+            <div className="flex flex-col">
+              <span className="text-xl font-bold leading-tight tracking-tight text-white">
+                José{" "}
+                <span className="text-violet-400">Filho</span>
+              </span>
+
+              <span className="mt-1 text-[10px] font-medium tracking-[0.28em] text-slate-500">
+                MY MULTIVERSE
+              </span>
+            </div>
           </Link>
 
-          <nav className="hidden items-center gap-8 lg:flex">
+          <nav className="hidden items-center gap-7 lg:flex xl:gap-9">
             {navigation.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
-                className={({ isActive }) =>
-                  `nav-link relative py-2 text-sm transition-colors duration-300 ${
-                    isActive
-                      ? "font-semibold text-violet-400"
-                      : "text-slate-400 hover:text-white"
-                  }`
-                }
+                end={item.path === "/"}
+                className={navLinkClass}
               >
                 {({ isActive }) => (
                   <>
-                    {item.name}
-                    <span
-                      className={`absolute bottom-0 left-0 h-0.5 rounded-full bg-gradient-to-r from-blue-400 to-violet-500 transition-all duration-300 ${
-                        isActive ? "w-full" : "w-0"
-                      }`}
-                    />
+                    {item.label}
+
+                    {isActive && (
+                      <span className="absolute -bottom-2 left-0 h-0.5 w-full rounded-full bg-gradient-to-r from-blue-400 to-violet-500" />
+                    )}
                   </>
                 )}
               </NavLink>
@@ -88,125 +83,131 @@ function Header() {
           </nav>
 
           <div className="hidden items-center gap-3 lg:flex">
-            {!loading && (
-              user ? (
-                profileButton
+            {!loading &&
+              (user ? (
+                <Link
+                  to="/perfil"
+                  aria-label="Meu perfil"
+                  title="Meu perfil"
+                  className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border border-violet-400/40 bg-violet-500/10 text-violet-300 transition duration-300 hover:scale-105 hover:border-violet-300 hover:bg-violet-500/20"
+                >
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt="Foto de perfil"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <UserRound size={23} />
+                  )}
+                </Link>
               ) : (
                 <>
                   <Link
                     to="/login"
-                    className="group flex items-center gap-2 rounded-lg px-4 py-2 text-sm text-slate-300 transition duration-300 hover:text-white"
+                    className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-300 transition hover:text-white"
                   >
-                    <LogIn
-                      size={16}
-                      className="transition-transform duration-300 group-hover:-translate-x-1"
-                    />
+                    <LogIn size={17} />
                     Entrar
                   </Link>
 
                   <Link
                     to="/cadastro"
-                    className="shine-button flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-900/20 transition duration-300 hover:-translate-y-0.5 hover:shadow-violet-600/30"
+                    className="shine-button flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5"
                   >
-                    <UserPlus size={16} />
+                    <UserPlus size={17} />
                     Criar conta
                   </Link>
                 </>
-              )
-            )}
+              ))}
           </div>
 
           <button
-            onClick={() => setMenuOpen((previous) => !previous)}
-            className="rounded-lg border border-white/10 p-2 text-white transition duration-300 hover:border-violet-400/50 hover:bg-violet-500/10 lg:hidden"
+            type="button"
+            onClick={() => setMenuOpen((current) => !current)}
             aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
             aria-expanded={menuOpen}
+            className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:border-violet-400/30 hover:text-white lg:hidden"
           >
-            {menuOpen ? <X size={23} /> : <Menu size={23} />}
+            {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
 
         <div
-          className={`grid transition-all duration-300 ease-in-out lg:hidden ${
+          className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out lg:hidden ${
             menuOpen
               ? "grid-rows-[1fr] opacity-100"
-              : "pointer-events-none grid-rows-[0fr] opacity-0"
+              : "grid-rows-[0fr] opacity-0"
           }`}
         >
           <div className="overflow-hidden">
-            <div className="border-t border-white/10 py-5">
-              <nav className="flex flex-col gap-1">
-                {navigation.map((item, index) => (
+            <nav className="border-t border-white/[0.07] bg-[#070b18]/95 px-5 py-4">
+              <div className="mx-auto flex max-w-7xl flex-col gap-1">
+                {navigation.map((item) => (
                   <NavLink
                     key={item.path}
                     to={item.path}
-                    onClick={closeMenu}
-                    style={{
-                      transitionDelay: menuOpen
-                        ? `${index * 35}ms`
-                        : "0ms",
-                    }}
+                    end={item.path === "/"}
                     className={({ isActive }) =>
-                      `rounded-lg px-4 py-3 text-sm transition-all duration-300 ${
+                      `rounded-xl px-4 py-3 text-sm font-medium transition ${
                         isActive
-                          ? "bg-violet-500/10 font-semibold text-violet-400"
-                          : "text-slate-300 hover:bg-white/5 hover:pl-6 hover:text-white"
+                          ? "bg-violet-500/10 text-violet-300"
+                          : "text-slate-400 hover:bg-white/5 hover:text-white"
                       }`
                     }
                   >
-                    {item.name}
+                    {item.label}
                   </NavLink>
                 ))}
-              </nav>
 
-              <div className="mt-4">
-                {!loading && (
-                  user ? (
+                <div className="my-2 border-t border-white/[0.07]" />
+
+                {!loading &&
+                  (user ? (
                     <Link
                       to="/perfil"
-                      onClick={closeMenu}
-                      className="flex items-center justify-center gap-3 rounded-lg border border-violet-400/30 bg-violet-500/10 py-3 text-sm font-semibold text-violet-300 transition hover:bg-violet-500/20"
+                      className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-violet-300 transition hover:bg-violet-500/10"
                     >
                       {avatarUrl ? (
                         <img
                           src={avatarUrl}
                           alt=""
-                          className="h-7 w-7 rounded-full object-cover"
+                          className="h-8 w-8 rounded-full border border-violet-400/30 object-cover"
                         />
                       ) : (
-                        <UserRound size={18} />
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full border border-violet-400/30 bg-violet-500/10">
+                          <UserRound size={17} />
+                        </span>
                       )}
+
                       Meu perfil
                     </Link>
                   ) : (
-                    <div className="grid grid-cols-2 gap-3">
+                    <>
                       <Link
                         to="/login"
-                        onClick={closeMenu}
-                        className="flex items-center justify-center gap-2 rounded-lg border border-white/10 py-3 text-center text-sm text-slate-300 transition hover:border-violet-400/40 hover:text-white"
+                        className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/5 hover:text-white"
                       >
-                        <LogIn size={16} />
+                        <LogIn size={18} />
                         Entrar
                       </Link>
 
                       <Link
                         to="/cadastro"
-                        onClick={closeMenu}
-                        className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-violet-600 py-3 text-center text-sm font-semibold text-white transition hover:brightness-110"
+                        className="flex items-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-3 text-sm font-semibold text-white"
                       >
-                        <UserPlus size={16} />
+                        <UserPlus size={18} />
                         Criar conta
                       </Link>
-                    </div>
-                  )
-                )}
+                    </>
+                  ))}
               </div>
-            </div>
+            </nav>
           </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      <div className="h-[88px]" aria-hidden="true" />
+    </>
   );
 }
-
-export default Header;
