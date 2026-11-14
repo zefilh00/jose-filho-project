@@ -4,6 +4,10 @@ import About from "./pages/About";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
+import Articles from "./pages/Articles";
+import Recommendations from "./pages/Recommendations";
+import ArticleDetail from "./pages/ArticleDetail";
+import ProductDetail from "./pages/ProductDetail";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import PageStatus from "./components/status/PageStatus";
 
@@ -18,23 +22,15 @@ export default function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/perfil" element={<Profile />} />
         </Route>
-        <Route
-          path="/artigos"
-          element={
-            <PageStatus
-              type="development"
-              pageName="A área de artigos"
-            />
-          }
-        />
+        <Route path="/artigos" element={<Articles />} />
+        <Route path="/artigos/:slug" element={<ArticleDetail />} />
         <Route
           path="/recomendacoes"
-          element={
-            <PageStatus
-              type="development"
-              pageName="A área de recomendações"
-            />
-          }
+          element={<Recommendations />}
+        />
+        <Route
+          path="/recomendacoes/:slug"
+          element={<ProductDetail />}
         />
         <Route
           path="/portfolio"
