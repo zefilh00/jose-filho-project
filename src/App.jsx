@@ -12,6 +12,7 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminRoute from "./components/auth/AdminRoute";
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminArticles from "./pages/admin/AdminArticles";
 import PageStatus from "./components/status/PageStatus";
 import ScrollToTop from "./components/layout/ScrollToTop";
 
@@ -30,6 +31,7 @@ export default function App() {
         <Route element={<AdminRoute />}>
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
+            <Route path="artigos" element={<AdminArticles />} />
           </Route>
         </Route>
         <Route path="/artigos" element={<Articles />} />

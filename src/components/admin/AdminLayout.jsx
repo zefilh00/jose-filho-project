@@ -1,6 +1,19 @@
 import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, FileText, ShoppingBag, BriefcaseBusiness, Tags, MessageSquare, Settings, ArrowLeft, LogOut, Menu, X, ShieldCheck, } from "lucide-react";
+import {
+  LayoutDashboard,
+  FileText,
+  ShoppingBag,
+  BriefcaseBusiness,
+  Tags,
+  MessageSquare,
+  Settings,
+  ArrowLeft,
+  LogOut,
+  Menu,
+  X,
+  ShieldCheck,
+} from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 
 const navigation = [
@@ -14,6 +27,7 @@ const navigation = [
     title: "Artigos",
     icon: FileText,
     path: "/admin/artigos",
+    available: true,
   },
   {
     title: "Recomendações",
