@@ -1,0 +1,48 @@
+import { Cpu, Gamepad2, Landmark, Music2, } from "lucide-react";
+
+export const homeCategories = [
+  {
+    name: "Tecnologia",
+    slug: "tecnologia",
+    description: "Inovação, programação e o futuro digital.",
+    shortDescription: "Tecnologia e inovação",
+    icon: Cpu,
+    color: "from-blue-500/20 to-cyan-500/5",
+    iconColor: "text-blue-400",
+    borderColor: "group-hover:border-blue-500/40",
+    glowColor: "group-hover:shadow-blue-500/10",
+  },
+  {
+    name: "Música",
+    slug: "musica",
+    description: "Álbuns, bandas e tudo que merece ser ouvido.",
+    shortDescription: "Rock, metal e descobertas",
+    icon: Music2,
+    color: "from-purple-500/20 to-violet-500/5",
+    iconColor: "text-purple-400",
+    borderColor: "group-hover:border-purple-500/40",
+    glowColor: "group-hover:shadow-purple-500/10",
+  },
+  {
+    name: "Cultura Geek",
+    slug: "mundo-geek",
+    description: "Games, filmes, séries e cultura nerd.",
+    shortDescription: "Games, filmes e séries",
+    icon: Gamepad2,
+    color: "from-violet-500/20 to-fuchsia-500/5",
+    iconColor: "text-violet-400",
+    borderColor: "group-hover:border-violet-500/40",
+    glowColor: "group-hover:shadow-violet-500/10",
+  },
+  {
+    name: "Política",
+    slug: "politica",
+    description: "Ideias, reflexões e diferentes perspectivas.",
+    shortDescription: "Ideias e perspectivas",
+    icon: Landmark,
+    color: "from-indigo-500/20 to-blue-500/5",
+    iconColor: "text-indigo-400",
+    borderColor: "group-hover:border-indigo-500/40",
+    glowColor: "group-hover:shadow-indigo-500/10",
+  },
+];
