@@ -9,6 +9,9 @@ import Recommendations from "./pages/Recommendations";
 import ArticleDetail from "./pages/ArticleDetail";
 import ProductDetail from "./pages/ProductDetail";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import AdminRoute from "./components/auth/AdminRoute";
+import AdminLayout from "./components/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 import PageStatus from "./components/status/PageStatus";
 import ScrollToTop from "./components/layout/ScrollToTop";
 
@@ -23,6 +26,11 @@ export default function App() {
         <Route path="/cadastro" element={<Register />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/perfil" element={<Profile />} />
+        </Route>
+        <Route element={<AdminRoute />}>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+          </Route>
         </Route>
         <Route path="/artigos" element={<Articles />} />
         <Route path="/artigos/:slug" element={<ArticleDetail />} />
