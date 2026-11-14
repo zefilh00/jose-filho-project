@@ -10,10 +10,12 @@ import ArticleDetail from "./pages/ArticleDetail";
 import ProductDetail from "./pages/ProductDetail";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import PageStatus from "./components/status/PageStatus";
+import ScrollToTop from "./components/layout/ScrollToTop";
 
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/sobre" element={<About />} />
@@ -24,14 +26,8 @@ export default function App() {
         </Route>
         <Route path="/artigos" element={<Articles />} />
         <Route path="/artigos/:slug" element={<ArticleDetail />} />
-        <Route
-          path="/recomendacoes"
-          element={<Recommendations />}
-        />
-        <Route
-          path="/recomendacoes/:slug"
-          element={<ProductDetail />}
-        />
+        <Route path="/recomendacoes" element={<Recommendations />} />
+        <Route path="/recomendacoes/:slug" element={<ProductDetail />} />
         <Route
           path="/portfolio"
           element={
