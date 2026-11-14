@@ -1,35 +1,46 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, CalendarDays, RefreshCw } from "lucide-react";
+import { ArrowLeft, CalendarDays, UserRound } from "lucide-react";
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
 import { getPublishedArticleBySlug } from "../services/articleService.js";
 import { formatPublicationDate } from "../utils/contentUtils.js";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeSanitize from "rehype-sanitize";
 
 export default function ArticleDetail() {
   const { slug } = useParams();
+
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const [reload, setReload] = useState(0);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let active = true;
 
     async function loadArticle() {
       setLoading(true);
-      setError(false);
+      setError("");
 
       try {
         const data = await getPublishedArticleBySlug(slug);
 
-        if (active) setArticle(data);
+        if (active) {
+          setArticle(data);
+        }
       } catch (err) {
         console.error("Erro ao carregar artigo:", err);
 
-        if (active) setError(true);
+        if (active) {
+          setError(
+            err.message || "Não foi possível carregar o artigo."
+          );
+        }
       } finally {
-        if (active) setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     }
 
@@ -38,13 +49,13 @@ export default function ArticleDetail() {
     return () => {
       active = false;
     };
-  }, [slug, reload]);
+  }, [slug]);
 
   return (
-    <div className="min-h-screen bg-[#080b18] text-white">
+    <>
       <Header />
 
-      <main className="section-container min-h-[70vh] px-4 pb-20 pt-8 sm:px-6 sm:pt-10">
+      <main className="min-h-screen bg-[#080b18] px-5 pb-20 pt-28 text-white sm:px-8">
         <div className="mx-auto max-w-4xl">
           <Link
             to="/artigos"
@@ -55,75 +66,73 @@ export default function ArticleDetail() {
           </Link>
 
           {loading ? (
-            <div className="flex min-h-96 items-center justify-center">
-              <RefreshCw
-                size={28}
-                className="animate-spin text-violet-400"
-              />
+            <div className="mt-20 text-center text-slate-400">
+              Carregando artigo...
             </div>
           ) : error ? (
-            <div className="mt-12 rounded-2xl border border-red-400/20 bg-red-500/5 px-6 py-12 text-center">
-              <h1 className="text-xl font-semibold text-white">
-                Não foi possível carregar este artigo
-              </h1>
-
-              <button
-                type="button"
-                onClick={() => setReload((current) => current + 1)}
-                className="mt-4 text-sm text-white underline underline-offset-4"
-              >
-                Tentar novamente
-              </button>
+            <div className="mt-12 rounded-2xl border border-red-500/20 bg-red-500/5 p-6 text-red-300">
+              {error}
             </div>
           ) : !article ? (
-            <div className="mt-12 rounded-2xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-16 text-center">
-              <h1 className="text-xl font-semibold text-white">
+            <div className="mt-20 text-center">
+              <h1 className="text-2xl font-bold">
                 Artigo não encontrado
               </h1>
-
-              <p className="mt-2 text-sm text-slate-500">
-                Este artigo pode ter sido removido ou ainda não foi publicado.
+              <p className="mt-3 text-slate-400">
+                Esse artigo pode ter sido removido ou não está publicado.
               </p>
             </div>
           ) : (
             <article className="mt-10">
               {article.category?.name && (
-                <span className="inline-flex rounded-full border border-violet-400/20 bg-violet-500/10 px-4 py-2 text-xs font-medium text-violet-300">
+                <span className="inline-flex rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-xs font-semibold text-violet-300">
                   {article.category.name}
                 </span>
               )}
 
-              <h1 className="mt-6 text-3xl font-bold leading-tight text-white sm:text-5xl">
+              <h1 className="mt-5 text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
                 {article.title}
               </h1>
 
               {article.excerpt && (
-                <p className="mt-6 text-lg leading-relaxed text-slate-400">
+                <p className="mt-5 text-lg leading-8 text-slate-400">
                   {article.excerpt}
                 </p>
               )}
 
-              {article.published_at && (
-                <div className="mt-6 flex items-center gap-2 text-sm text-slate-500">
+              <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 border-b border-white/10 pb-7 text-sm text-slate-400">
+                <span className="inline-flex items-center gap-2">
+                  <UserRound size={16} />
+                  Por {article.author?.display_name || "José Filho"}
+                </span>
+
+                <span className="inline-flex items-center gap-2">
                   <CalendarDays size={16} />
                   {formatPublicationDate(article.published_at)}
-                </div>
-              )}
+                </span>
+              </div>
 
               {article.coverImage && (
-                <div className="mt-10 overflow-hidden rounded-2xl border border-white/10">
-                  <img
-                    src={article.coverImage}
-                    alt={article.title}
-                    className="max-h-[520px] w-full object-cover"
-                  />
-                </div>
+                <img
+                  src={article.coverImage}
+                  alt={article.title}
+                  className="mt-9 max-h-[520px] w-full rounded-2xl object-cover"
+                />
               )}
 
-              <div className="prose prose-invert mt-10 max-w-none">
-                <div className="whitespace-pre-wrap text-base leading-8 text-slate-300">
-                  {article.content}
-                </div>
+              <div className="prose prose-invert mt-12 max-w-none prose-headings:font-bold prose-headings:text-white prose-p:text-slate-300 prose-p:leading-8 prose-a:text-violet-300 prose-strong:text-white prose-blockquote:border-violet-500 prose-blockquote:text-slate-400 prose-img:rounded-xl prose-th:text-white prose-td:text-slate-300">
+                {article.content?.trim() ? (
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeSanitize]}
+                  >
+                    {article.content}
+                  </ReactMarkdown>
+                ) : (
+                  <p className="text-slate-500">
+                    Este artigo ainda não possui conteúdo.
+                  </p>
+                )}
               </div>
 
               {article.images?.length > 0 && (
@@ -133,15 +142,8 @@ export default function ArticleDetail() {
                       <img
                         src={image.url}
                         alt={image.alt_text || article.title}
-                        loading="lazy"
-                        className="w-full rounded-2xl border border-white/10"
+                        className="w-full rounded-2xl object-cover"
                       />
-
-                      {image.alt_text && (
-                        <figcaption className="mt-3 text-center text-sm text-slate-500">
-                          {image.alt_text}
-                        </figcaption>
-                      )}
                     </figure>
                   ))}
                 </div>
@@ -152,6 +154,6 @@ export default function ArticleDetail() {
       </main>
 
       <Footer />
-    </div>
+    </>
   );
 }

@@ -1,8 +1,24 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FileText, Search, RefreshCw, Trash2, Eye, EyeOff, CalendarDays, Plus, AlertCircle, Filter } from "lucide-react";
+import {
+  FileText,
+  Search,
+  RefreshCw,
+  Trash2,
+  Eye,
+  EyeOff,
+  CalendarDays,
+  Plus,
+  AlertCircle,
+  Filter,
+  Pencil,
+} from "lucide-react";
 import { getCategories } from "../../services/categoryService.js";
-import { getAdminArticles, updateArticleStatus, deleteArticle, } from "../../services/admin/adminArticleService.js";
+import {
+  getAdminArticles,
+  updateArticleStatus,
+  deleteArticle,
+} from "../../services/admin/adminArticleService.js";
 import { formatPublicationDate } from "../../utils/contentUtils.js";
 import ArticleStatusBadge from "../../components/admin/articles/ArticleStatusBadge";
 
@@ -57,7 +73,9 @@ export default function AdminArticles() {
       await loadData();
     } catch (err) {
       console.error("Erro ao atualizar publicação:", err);
-      setError(err.message || "Não foi possível atualizar o artigo.");
+      setError(
+        err.message || "Não foi possível atualizar o artigo."
+      );
     } finally {
       setActionId(null);
     }
@@ -109,15 +127,11 @@ export default function AdminArticles() {
 
         <button
           type="button"
-          disabled
-          title="O editor de artigos será implementado na próxima etapa."
-          className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-violet-500/40 px-5 py-3 text-sm font-semibold text-white/70"
+          onClick={() => navigate("/admin/artigos/novo")}
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-violet-500"
         >
           <Plus size={18} />
           Novo artigo
-          <span className="text-[10px] uppercase tracking-wider">
-            Em breve
-          </span>
         </button>
       </section>
 
@@ -255,7 +269,7 @@ export default function AdminArticles() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[850px] text-left">
+              <table className="w-full min-w-[900px] text-left">
                 <thead>
                   <tr className="border-b border-white/[0.08] text-xs uppercase tracking-wider text-slate-500">
                     <th className="px-6 py-4 font-medium">Artigo</th>
@@ -304,6 +318,20 @@ export default function AdminArticles() {
 
                       <td className="px-6 py-5">
                         <div className="flex justify-end gap-2">
+                          <button
+                            type="button"
+                            disabled={actionId === article.id}
+                            onClick={() =>
+                              navigate(
+                                `/admin/artigos/${article.id}/editar`
+                              )
+                            }
+                            title="Editar artigo"
+                            className="rounded-lg border border-white/10 p-2 text-slate-400 transition hover:border-violet-500/30 hover:bg-violet-500/10 hover:text-violet-300 disabled:opacity-40"
+                          >
+                            <Pencil size={17} />
+                          </button>
+
                           <button
                             type="button"
                             disabled={actionId === article.id}

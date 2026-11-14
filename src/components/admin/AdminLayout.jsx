@@ -113,7 +113,9 @@ export default function AdminLayout() {
               <p className="truncate text-sm font-semibold text-white">
                 {profile?.display_name || "Administrador"}
               </p>
-              <p className="text-xs text-violet-300">Administrador</p>
+              <p className="text-xs text-violet-300">
+                Administrador
+              </p>
             </div>
           </div>
         </div>
@@ -137,6 +139,7 @@ export default function AdminLayout() {
                     <Icon size={18} />
                     {item.title}
                   </span>
+
                   <span className="text-[9px] uppercase tracking-wider">
                     Em breve
                   </span>
@@ -209,7 +212,10 @@ export default function AdminLayout() {
           </div>
 
           <div className="flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/[0.07] px-3 py-2">
-            <ShieldCheck size={15} className="text-violet-300" />
+            <ShieldCheck
+              size={15}
+              className="text-violet-300"
+            />
             <span className="text-xs font-medium text-violet-300">
               Administrador
             </span>

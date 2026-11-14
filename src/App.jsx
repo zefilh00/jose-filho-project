@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
@@ -13,6 +14,7 @@ import AdminRoute from "./components/auth/AdminRoute";
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminArticles from "./pages/admin/AdminArticles";
+import AdminArticleEditor from "./pages/admin/AdminArticleEditor";
 import PageStatus from "./components/status/PageStatus";
 import ScrollToTop from "./components/layout/ScrollToTop";
 
@@ -32,12 +34,26 @@ export default function App() {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
             <Route path="artigos" element={<AdminArticles />} />
+            <Route
+              path="artigos/novo"
+              element={<AdminArticleEditor />}
+            />
+            <Route
+              path="artigos/:id/editar"
+              element={<AdminArticleEditor />}
+            />
           </Route>
         </Route>
         <Route path="/artigos" element={<Articles />} />
         <Route path="/artigos/:slug" element={<ArticleDetail />} />
-        <Route path="/recomendacoes" element={<Recommendations />} />
-        <Route path="/recomendacoes/:slug" element={<ProductDetail />} />
+        <Route
+          path="/recomendacoes"
+          element={<Recommendations />}
+        />
+        <Route
+          path="/recomendacoes/:slug"
+          element={<ProductDetail />}
+        />
         <Route
           path="/portfolio"
           element={

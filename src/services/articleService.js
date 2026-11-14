@@ -64,7 +64,6 @@ export async function getPublishedArticles({
   const { data, error } = await query;
 
   if (error) throw error;
-
   if (!data?.length) return [];
 
   const categoryIds = [
@@ -103,31 +102,43 @@ export async function getPublishedArticleBySlug(slug) {
     .maybeSingle();
 
   if (error) throw error;
-
   if (!article) return null;
 
-  const [categoryResult, imagesResult] = await Promise.all([
-    article.category_id
-      ? supabase
-          .from("categories")
-          .select("id, name, slug, type")
-          .eq("id", article.category_id)
-          .maybeSingle()
-      : Promise.resolve({ data: null, error: null }),
+  const [categoryResult, imagesResult, authorResult] =
+    await Promise.all([
+      article.category_id
+        ? supabase
+            .from("categories")
+            .select("id, name, slug, type")
+            .eq("id", article.category_id)
+            .maybeSingle()
+        : Promise.resolve({ data: null, error: null }),
 
-    supabase
-      .from("article_images")
-      .select("id, image_path, alt_text, position")
-      .eq("article_id", article.id)
-      .order("position", { ascending: true }),
-  ]);
+      supabase
+        .from("article_images")
+        .select("id, image_path, alt_text, position")
+        .eq("article_id", article.id)
+        .order("position", { ascending: true }),
+
+      article.author_id
+        ? supabase
+            .from("profiles")
+            .select("id, display_name, avatar_path")
+            .eq("id", article.author_id)
+            .maybeSingle()
+        : Promise.resolve({ data: null, error: null }),
+    ]);
 
   if (categoryResult.error) throw categoryResult.error;
   if (imagesResult.error) throw imagesResult.error;
+  if (authorResult.error) throw authorResult.error;
 
-  return formatArticle(
-    article,
-    categoryResult.data,
-    imagesResult.data ?? []
-  );
+  return {
+    ...formatArticle(
+      article,
+      categoryResult.data,
+      imagesResult.data ?? []
+    ),
+    author: authorResult.data ?? null,
+  };
 }
