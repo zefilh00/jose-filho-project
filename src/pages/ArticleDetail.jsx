@@ -122,12 +122,14 @@ export default function ArticleDetail() {
 
               <div className="prose prose-invert mt-12 max-w-none prose-headings:font-bold prose-headings:text-white prose-p:text-slate-300 prose-p:leading-8 prose-a:text-violet-300 prose-strong:text-white prose-blockquote:border-violet-500 prose-blockquote:text-slate-400 prose-img:rounded-xl prose-th:text-white prose-td:text-slate-300">
                 {article.content?.trim() ? (
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    rehypePlugins={[rehypeSanitize]}
-                  >
-                    {article.content}
-                  </ReactMarkdown>
+                  <div className="article-content">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      rehypePlugins={[rehypeSanitize]}
+                    >
+                      {article.content}
+                    </ReactMarkdown>
+                  </div>
                 ) : (
                   <p className="text-slate-500">
                     Este artigo ainda não possui conteúdo.
